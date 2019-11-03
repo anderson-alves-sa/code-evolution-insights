@@ -7,11 +7,29 @@ use std::process::{Command, Stdio};
 use std::io::{self, Write};
 use std::fs::File;
 
+use structopt::StructOpt;
+
+#[derive(StructOpt)]
+struct Cli {
+
+    /// The path to the git repository
+    #[structopt(short = "p", long = "path")]
+    project_path: String,
+    /// The date after the analisys should run against (YYYY-MM-DD)
+    #[structopt(short = "a", long = "after")]
+    after_date: String,
+    /// The date before the analisys should run against (YYYY-MM-DD)
+    #[structopt(short = "b", long = "before")]
+    before_date: String,
+}
+
 fn main() {
 
-    let project_path = "{path-to-repository}";
-    let before_date = "2019-12-01";
-    let after_date = "2019-01-01";
+    let args = Cli::from_args();
+
+    let project_path = &args.project_path;
+    let before_date = &args.before_date;
+    let after_date = &args.after_date;
 
     //cloc ./ --by-file --csv --quiet --report-file=classi_lines.csv
 

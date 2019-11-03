@@ -16,8 +16,7 @@ To be able to run the application you need some dependencies on your environment
 
 ## Usage
 
-After installing the dependencies, in the project folder, execute ```cargo run``` to start the project.
-* The path to the project to be analysed is still hardcoded in main.rs, as well as the analisys period. Need to be extracted as arguments
+After installing the dependencies, in the project folder, execute ```cargo run -- --after YYYY-MM-DD --before YYYY-MM-DD --path <path-to-git-repo>``` to start the project.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
