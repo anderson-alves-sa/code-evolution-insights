@@ -1,6 +1,5 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
-use rocket_contrib::serve::StaticFiles;
+use actix_files as fs;
+use actix_web::{App, HttpServer};
 
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 use std::process::{Command, Stdio};
@@ -91,8 +90,7 @@ fn main() {
         .expect("failed to execute process");
 
     println!("frequencies report status: {}", frequencies_report.status);
-    println!("frequencies report status: {:#?}", frequencies_report.stdout);
-
+  
     //python merge_comp_freqs.py classi_freqs.csv classi_lines.csv > merged_freqs_lines.csv
 
     let merged_frequencies_lines_report_file = "static/csvs/merged_frequencies_lines.csv"; //&[project_prefix, "merged_frequencies_lines.csv"].concat();
@@ -110,7 +108,6 @@ fn main() {
       io::stderr().write_all(&merged_frequencies_lines_report.stderr).unwrap();
 
     println!("merged frequencies lines report status: {}", merged_frequencies_lines_report.status);
-    println!("stdout: {:#?}", merged_frequencies_lines_report.stdout);
 
     //python ../../code_maat_inst/py_scripts/scripts/csv_as_enclosure_json.py --structure=classi_lines.csv --weights=classi_freqs
 
@@ -128,10 +125,15 @@ fn main() {
         .expect("failed to execute process");
 
     println!("merged frequencies lines report status: {}", csv_as_enclosure_json_report.status);
-    println!("stdout: {:#?}", csv_as_enclosure_json_report.stdout);
-    
-    rocket::ignite()
-        .mount("/", StaticFiles::from(concat!(env!("CARGO_MANIFEST_DIR"), "/static/public")))
-        .launch();
+
+    println!("go to: http://127.0.0.1:8088/static/public/");
+
+    HttpServer::new(|| {
+        App::new().service(fs::Files::new("/", "/static/public").index_file("index.html"))
+    })
+    .bind("127.0.0.1:8088") 
+    .unwrap()
+    .run()
+    .unwrap();
     
 }
